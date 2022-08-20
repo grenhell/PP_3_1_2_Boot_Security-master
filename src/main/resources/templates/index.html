@@ -8,7 +8,15 @@
 <a th:href="@{/registration}">register</a>
 <br/>
 <br/>
-<a th:href="@{/login}">login</a>
+<div sec:authorize="!isAuthenticated()">
+    <form  th:action="@{/login}" method="get">
+        <input type="submit" value="Log in">
+    </form>
+</div>
+<br/>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Log Out</button>
+</form>
 
 </body>
 </html>

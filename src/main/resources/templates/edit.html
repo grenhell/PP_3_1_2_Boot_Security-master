@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <html lang="en">
 <head>
   <title>Edit User</title>
@@ -15,8 +15,14 @@
   <label for="email"> Enter email: </label>
   <input type="text" th:field="*{email}" id="email"/>
   <br/>
+  <br/>
   <input type="submit" value="edit">
 </form>
+<br/>
+<form th:action="@{/logout}" method="post">
+  <button type="submit">Log Out</button>
+</form>
+
 </body>
 </html>
 </html>
