@@ -29,16 +29,6 @@ public class AdminController {
         return "users";
 
     }
-//    @GetMapping("/users/create")
-//    public String createUserForm (User user){
-//        return "create";
-//    }
-//
-//    @PostMapping("/users/create")
-//    public String createUser (User user){
-//        userService.save(user);
-//        return "redirect:/users";
-//    }
 
     @GetMapping("/user/{id}")
     public String read(@PathVariable("id") long id, Model model) {
