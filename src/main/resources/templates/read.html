@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Card</title>
+</head>
+<body>
+<h1>User Card</h1>
+<table border="1">
+    <tr>
+        <th>id</th>
+        <th>username</th>
+        <th>password</th>
+        <th>email</th>
+    </tr>
+    <tr>
+        <td th:utext="${user.id}">id</td>
+        <td th:utext="${user.username}">firstname</td>
+        <td th:utext="${user.password}">lastname</td>
+        <td th:utext="${user.email}">email</td>
+    </tr>
+</table>
+<br/>
+<a th:href="@{/}">to Main Page</a>
+</body>
+</html>
