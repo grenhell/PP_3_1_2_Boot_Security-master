@@ -13,7 +13,6 @@ public class Role {
     private Long id;
     private String name;
 
-    @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
@@ -28,6 +27,10 @@ public class Role {
     public Role(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+    @Override
+    public String toString (){
+        return this.name.substring(5);
     }
 
 }

@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -25,13 +24,14 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
-    @Autowired
-    RoleRepository roleRepository;
+
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -40,8 +40,12 @@ public class UserService implements UserDetailsService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    public List<Role> getAllRoles (){
+        return roleRepository.findAll();
+    }
+
     public boolean save (User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
+        User userFromDB = userRepository.findByEmail(user.getEmail());
 
         if (userFromDB != null) {
             return false;
@@ -51,6 +55,11 @@ public class UserService implements UserDetailsService {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
+    }
+
+    public void updateById (User user, Long id) {
+        user.setId(id);
+        userRepository.save(user);
     }
 
     public User findById (Long id){
@@ -63,19 +72,19 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email);
         if(user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+            throw new UsernameNotFoundException(String.format("User '%s' not found", email));
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
     }
 

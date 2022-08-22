@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 import lombok.Data;
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Set;
 
 
 @Entity
@@ -12,15 +13,23 @@ public class User  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String firstname;
+
+    private String lastname;
 
     private String password;
 
     private String email;
 
-    @ManyToMany
+    private Byte age;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
+            joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
+
+    public String rolesToString (){
+        return roles.toString().replaceAll("[^a-zA-Z]", " ");
+    }
 }

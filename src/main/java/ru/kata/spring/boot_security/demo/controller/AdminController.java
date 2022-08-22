@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
@@ -23,34 +24,31 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String findAll (Model model){
+    public String findAll (Principal principal, Model model){
         List <User> userList = userService.findAll();
+        model.addAttribute("user", userService.findByEmail(principal.getName()));
         model.addAttribute("userlist", userList);
+        model.addAttribute("roles", userService.getAllRoles());
+
         return "users";
 
     }
 
-    @GetMapping("/user/{id}")
-    public String read(@PathVariable("id") long id, Model model) {
-        model.addAttribute("user", userService.findById(id));
-        return "/read";
-    }
-
     @GetMapping("/user")
-    public String home(Principal principal, Model model) {
-        model.addAttribute("user",userService.findByUsername(principal.getName()));
+    public String home (Principal principal, Model model) {
+        model.addAttribute("user",userService.findByEmail(principal.getName()));
         return "/read";
     }
 
-    @GetMapping("/admin/{id}/edit")
-    public String edit (Model model, @PathVariable("id") Long id) {
-        model.addAttribute("user", userService.findById(id));
-        return "/edit";
+    @PostMapping("/admin/create")
+    public String addUser(User user) {
+        userService.save(user);
+        return "redirect:/admin";
     }
 
     @PostMapping("/admin/{id}")
     public String update (@ModelAttribute("user") User user, @PathVariable("id") Long id) {
-        userService.save(user);
+        userService.updateById(user, id);
         return "redirect:/admin";
     }
     @GetMapping("/admin/{id}/delete")
