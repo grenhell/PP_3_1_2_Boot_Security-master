@@ -1,4 +1,7 @@
 package ru.kata.spring.boot_security.demo.model;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import javax.persistence.*;
 import java.util.Collection;
@@ -27,6 +30,8 @@ public class User  {
     @JoinTable(name = "users_roles",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonManagedReference
+
     private Collection<Role> roles;
 
     public String rolesToString (){

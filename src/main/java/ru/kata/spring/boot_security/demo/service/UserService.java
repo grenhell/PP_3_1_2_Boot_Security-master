@@ -18,6 +18,7 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +45,8 @@ public class UserService implements UserDetailsService {
         return roleRepository.findAll();
     }
 
+    public Role findRoleById (Long id) {return  roleRepository.findById(id).orElse(null);}
+
     public boolean save (User user) {
         User userFromDB = userRepository.findByEmail(user.getEmail());
 
@@ -57,9 +60,16 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public void updateById (User user, Long id) {
+    public boolean updateById (User user, Long id) {
+
+        Optional<User> userFromDB = userRepository.findById(id);
+
+        if (userFromDB.isEmpty()) {
+            return false;
+        }
         user.setId(id);
         userRepository.save(user);
+        return true;
     }
 
     public User findById (Long id){
@@ -68,8 +78,14 @@ public class UserService implements UserDetailsService {
     public List<User> findAll (){
         return userRepository.findAll();
     }
-    public void delete (Long id){
+    public boolean delete (Long id){
+        Optional<User> userFromDB = userRepository.findById(id);
+
+        if (userFromDB.isEmpty()) {
+            return false;
+        }
         userRepository.deleteById(id);
+        return true;
     }
 
     public User findByEmail(String email) {
