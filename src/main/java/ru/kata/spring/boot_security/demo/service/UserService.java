@@ -41,11 +41,16 @@ public class UserService implements UserDetailsService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    //методы выгрузки ролей
+
     public List<Role> getAllRoles (){
         return roleRepository.findAll();
     }
 
     public Role findRoleById (Long id) {return  roleRepository.findById(id).orElse(null);}
+
+
+    //crud методы юзера
 
     public boolean save (User user) {
         User userFromDB = userRepository.findByEmail(user.getEmail());
@@ -53,8 +58,6 @@ public class UserService implements UserDetailsService {
         if (userFromDB != null) {
             return false;
         }
-
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
@@ -92,6 +95,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
+//методы авторизации
 
     @Override
     @Transactional

@@ -22,7 +22,7 @@ function getTableWithUsers() {
                             <td>${user.lastname}</td>
                             <td>${user.age}</td>
                             <td>${user.email}</td>
-                           <td>${user.roles.map(role => role.name === 'ROLE_USER' ? ' USER' : ' ADMIN')}</td>
+                            <td>${user.roles.map(role => role.name === 'ROLE_USER' ? ' USER' : ' ADMIN')}</td>
                            <td><button data-bs-toggle="modal" id="editModalOpen" data-bs-target="#editModal" class="btnEdit btn btn-info">Edit</button></td>
                            <td><button data-bs-toggle="modal" id="deleteModalOpen" data-bs-target="#deleteModal" class="btnDelete btn btn-danger">Delete</button></td>
                         </tr>

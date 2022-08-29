@@ -1,52 +1,104 @@
-let deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'), {
+let editModal = new bootstrap.Modal(document.getElementById('editModal'), {
     keyboard: false
 })
 
-const submitDelete = document.querySelector('#submitDelete')
-const idDelete = document.querySelector('#idDelete')
-const firstNameDelete = document.querySelector('#firstnameDelete')
-const lastnameDelete = document.querySelector('#lastnameDelete')
-const ageDelete = document.querySelector('#ageDelete')
-const emailDelete = document.querySelector('#emailDelete')
+let usersTable = document.querySelector('#usersTable')
+
+const submitEdit = document.querySelector('#submitEdit')
+
+const idEdit = document.querySelector('#idEdit')
+const firstNameEdit = document.querySelector('#firstnameEdit')
+const lastnameEdit = document.querySelector('#lastnameEdit')
+const ageEdit = document.querySelector('#ageEdit')
+const emailEdit = document.querySelector('#emailEdit')
+const passwordEdit = document.querySelector('#passwordEdit')
+
+const rolesEdit = document.querySelector('#rolesEdit')
 
 
-const eventButton = (element, event, selector, handler) => {
-    element.addEventListener(event, e => {
-        if(e.target.closest(selector)){
-            handler(e)
-        }
-    })
-}
 
-
-eventButton(document, 'click', '#deleteModalOpen', e => {
+//
+eventButton(document, 'click', '#editModalOpen', e => {
     const parentTr = e.target.parentNode.parentNode
     const id = parentTr.firstElementChild.innerHTML
+    addRolesForSelect(rolesEdit)
+
 
     fetch("http://localhost:8080/api/users/" + id)
         .then(res => res.json())
         .then(user => {
-            idDelete.value = user.id
-            emailDelete.value = user.username
-            firstNameDelete.value = user.firstname
-            lastnameDelete.value = user.lastname
-            ageDelete.value = user.age
+            idEdit.value = user.id
+            firstNameEdit.value = user.firstname
+            lastnameEdit.value = user.lastname
+            ageEdit.value = user.age
+            emailEdit.value = user.email
+            passwordEdit.value = ' '
         })
 
 })
 
-submitDelete.addEventListener('submit', (e) => {
+submitEdit.addEventListener('submit', (e) => {
+    // e.preventDefault();
+    e.stopPropagation();
+    let id = idEdit.value
+    let roleNames = getSelectValues(rolesEdit)
 
-    let id = idDelete.value
-    fetch("http://localhost:8080/api/users/" + id,{
-        method: 'DELETE'
+    fetch("http://localhost:8080/api/users/" + '?inputRoles=' + roleNames, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'id': idEdit.value,
+            'firstname': firstNameEdit.value,
+            'lastname': lastnameEdit.value,
+            'age': ageEdit.value,
+            'email': emailEdit.value,
+            'password': passwordEdit.value
+
+        })
     })
         .then(() => {
-            deleteModal.hide()
+            editModal.hide()
             Array.from(usersTable.querySelectorAll('tr')).map(tr => {
                 if (tr.firstElementChild.innerHTML === id) {
-                    tr.parentNode.removeChild(tr)
+                    let currentNode = tr.firstChild
+                    currentNode.textContent = idEdit.value
+                    currentNode = currentNode.nextSibling
+                    currentNode.textContent = firstNameEdit.value
+                    currentNode = currentNode.nextSibling
+                    currentNode.textContent = lastnameEdit.value
+                    currentNode = currentNode.nextSibling
+                    currentNode.textContent = ageEdit.value
+                    currentNode = currentNode.nextSibling
+                    currentNode.textContent = emailEdit.value
+                    currentNode = currentNode.nextSibling
+                    currentNode.textContent = passwordEdit.value
+                    currentNode = currentNode.nextSibling
+                    getRoleForUserById(id, currentNode)
                 }
             })
         })
 })
+
+function getRoleForUserById(id , node){
+    let res = ''
+    fetch('http://localhost:8080/api/users/'+id)
+        .then(res => res.json())
+        .then(user => {
+            user.roles.forEach(role => {
+                res += role.name.replace("ROLE_", "")
+            })
+            node.textContent = res
+        })
+}
+
+function validateEditForm()
+{
+    let x=document.forms["submitNameEdit"]["inputRoles"].value;
+    if (x==null || x=="")
+    {
+        alert("Необходимо выбрать Роли!");
+        return false;
+    }
+}

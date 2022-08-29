@@ -29,7 +29,7 @@ public class RestController {
     }
 
     @GetMapping(value = "/users")
-    public ResponseEntity<List<User>> restAllUsers() {
+    public ResponseEntity<List<User>> apiAllUsers() {
         List <User> userList = userService.findAll();
         return userList != null &&  !userList.isEmpty()
                 ? new ResponseEntity<>(userList, HttpStatus.OK)
@@ -37,7 +37,7 @@ public class RestController {
     }
 
     @GetMapping(value = "/users/{id}")
-    public ResponseEntity<User> restReadUser(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<User> apiReadUser(@PathVariable(name = "id") Long id) {
          User user = userService.findById(id);
 
         return user != null
@@ -69,7 +69,7 @@ public class RestController {
             roleHashSet.add(userService.findRoleById(i));
         }
         user.setRoles(roleHashSet);
-        userService.save(user);
+        userService.updateById(user, user.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
